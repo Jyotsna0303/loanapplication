@@ -41,10 +41,10 @@ public class LoanCalculatorController {
 
 		URI location = restTemplate.postForLocation("http://loans.joe.com/loanApplication", loan); //this line sends the loan for approval request, which could take up to 24 hours
 		
-		BigDecimal applicableRate = loan.getInterestRate().divide(new BigDecimal("100"));
+		BigDecimal applicableRate = loan.getInterestRate().multiply(new BigDecimal(loan.getTermInMonths())).divide(new BigDecimal("1200"));
 		applicableRate = applicableRate.add(new BigDecimal("1"));
 		
-		BigDecimal totalRepayable = new BigDecimal(loan.getPrincipal() * Double.parseDouble(applicableRate.toString()) * loan.getTermInMonths() / 12);
+		BigDecimal totalRepayable = new BigDecimal(loan.getPrincipal() * Double.parseDouble(applicableRate.toString()) );
 		BigDecimal repayment = totalRepayable.divide(new BigDecimal("" + loan.getTermInMonths()),RoundingMode.UP);
 		loan.setRepayment(repayment);
 		
@@ -56,6 +56,19 @@ public class LoanCalculatorController {
 		
 		return new ModelAndView("requestAccepted");
 	} 
-	
-	
+
+	//setter methods just for testing purposes
+
+
+	public void setData(LoanRepository data) {
+		this.data = data;
+	}
+
+	public void setMailSender(JavaMailSender mailSender) {
+		this.mailSender = mailSender;
+	}
+
+	public void setRestTemplate(RestTemplate restTemplate) {
+		this.restTemplate = restTemplate;
+	}
 }
